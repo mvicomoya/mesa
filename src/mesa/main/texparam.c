@@ -1167,6 +1167,36 @@ _mesa_TexParameterIuiv(GLenum target, GLenum pname, const GLuint *params)
    _mesa_texture_parameterIuiv(ctx, texObj, pname, params, false);
 }
 
+void GLAPIENTRY
+_mesa_TexParametervNVX(GLenum target, GLenum pname, GLsizeiptr size, const GLvoid *params)
+{
+   struct gl_texture_object *texObj;
+   GET_CURRENT_CONTEXT(ctx);
+
+   if (!ctx->Extensions.NVX_unix_allocator_import) {
+      _mesa_error(ctx, GL_INVALID_OPERATION, "glTexParametervNVX(unsupported)");
+      return;
+   }
+
+   texObj = get_texobj_by_target(ctx, target, GL_FALSE);
+   if (!texObj)
+      return;
+
+   switch (pname) {
+#ifdef GL_NVX_unix_allocator_import
+   case GL_SURFACE_METADATA_NVX:
+       /* TODO: Deserialize params to a capability set and stash the data in the
+        * texture object.
+        */
+       break;
+#endif
+   default:
+      _mesa_error(ctx, GL_INVALID_ENUM, "glTexParametervNVX(pname=%s)",
+                  _mesa_enum_to_string(pname));
+      return;
+   }
+}
+
 
 void GLAPIENTRY
 _mesa_TextureParameterfv(GLuint texture, GLenum pname, const GLfloat *params)

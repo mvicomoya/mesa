@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE OpenGLAPI SYSTEM "gl_API.dtd">
+
+<!-- Note: no GLX protocol info yet. -->
+
+
+<OpenGLAPI>
+
+<category name="NVX_unix_allocator_import" number="999">
+
+    <enum name="SURFACE_METADATA_NVX"              value="0xF000"/>
+    <enum name="HANDLE_TYPE_ALLOCATOR_FD_NVX"      value="0xF001"/>
+
+    <function name="TexParametervNVX" es1="1.1" es2="2.0">
+        <param name="target" type="GLenum"/>
+        <param name="pname" type="GLenum"/>
+        <param name="size" type="GLsizeiptr"/>
+        <param name="params" type="const GLvoid *" variable_param="pname"/>
+    </function>
+
+</category>
+
+</OpenGLAPI>

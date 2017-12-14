@@ -142,6 +142,9 @@ extern void GLAPIENTRY
 _mesa_TexParameterIuiv(GLenum target, GLenum pname, const GLuint *params);
 
 extern void GLAPIENTRY
+_mesa_TexParametervNVX(GLenum target, GLenum pname, GLsizeiptr size, const GLvoid *params);
+
+extern void GLAPIENTRY
 _mesa_TextureParameterfv(GLuint texture, GLenum pname, const GLfloat *params);
 
 extern void GLAPIENTRY

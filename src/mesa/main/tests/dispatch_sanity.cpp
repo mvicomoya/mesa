@@ -1020,6 +1020,9 @@ const struct function common_desktop_functions_possible[] = {
    { "glImportMemoryFdEXT", 45, -1 },
    { "glImportSemaphoreFdEXT", 45, -1 },
 
+   /* GL_NVX_unix_allocator_import */
+   { "glTexParametervNVX", 11, -1},
+
    { NULL, 0, -1 }
 };
 
