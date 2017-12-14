@@ -616,7 +616,11 @@ _mesa_ImportMemoryFdEXT(GLuint memory,
       return;
    }
 
-   if (handleType != GL_HANDLE_TYPE_OPAQUE_FD_EXT) {
+   if (handleType != GL_HANDLE_TYPE_OPAQUE_FD_EXT
+#ifdef GL_NVX_unix_allocator_import
+       && handleType != GL_HANDLE_TYPE_ALLOCATOR_FD_NVX
+#endif
+       ) {
       _mesa_error(ctx, GL_INVALID_VALUE, "%s(handleType=%u)", func, handleType);
       return;
    }
