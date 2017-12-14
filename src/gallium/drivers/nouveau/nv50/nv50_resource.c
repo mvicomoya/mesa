@@ -91,6 +91,55 @@ nv50_invalidate_resource(struct pipe_context *pipe, struct pipe_resource *res)
       nouveau_buffer_invalidate(pipe, res);
 }
 
+struct pipe_resource *
+nv50_resource_from_memobj(struct pipe_screen *screen,
+                          const struct pipe_resource *templ,
+                          struct pipe_memory_object *memobj,
+                          uint64_t offset)
+{
+   if (offset != 0) {
+      debug_printf("%s: attempt to import unsupported winsys offset %lu\n",
+                   __FUNCTION__, offset);
+      return NULL;
+   }
+
+   if (templ->target == PIPE_BUFFER)
+      return NULL;
+   else
+      return nv50_miptree_from_memobj(screen, templ, memobj);
+}
+
+struct pipe_memory_object *
+nv50_memobj_from_handle(struct pipe_screen *screen,
+                        struct winsys_handle *whandle,
+                        bool dedicated)
+{
+   struct nv50_memory_object *mo;
+
+   mo = CALLOC_STRUCT(nv50_memory_object);
+   if (!mo)
+      return NULL;
+
+   mo->bo = nouveau_screen_bo_from_handle(screen, whandle, &mo->stride);
+   if (mo->bo == NULL) {
+      FREE(mo);
+      return NULL;
+   }
+   mo->base.dedicated = dedicated;
+
+   return &mo->base;
+}
+
+void
+nv50_memobj_destroy(struct pipe_screen *screen,
+                    struct pipe_memory_object *memobj)
+{
+   struct nv50_memory_object *mo = nv50_memory_object(memobj);
+
+   nouveau_bo_ref(NULL, &mo->bo);
+   FREE(mo);
+}
+
 void
 nv50_init_resource_functions(struct pipe_context *pcontext)
 {
@@ -111,4 +160,7 @@ nv50_screen_init_resource_functions(struct pipe_screen *pscreen)
    pscreen->resource_from_handle = nv50_resource_from_handle;
    pscreen->resource_get_handle = u_resource_get_handle_vtbl;
    pscreen->resource_destroy = u_resource_destroy_vtbl;
+   pscreen->resource_from_memobj = nv50_resource_from_memobj;
+   pscreen->memobj_create_from_handle = nv50_memobj_from_handle;
+   pscreen->memobj_destroy = nv50_memobj_destroy;
 }

@@ -43,6 +43,25 @@ nvc0_surface_create(struct pipe_context *pipe,
    return nvc0_miptree_surface_new(pipe, pres, templ);
 }
 
+static struct pipe_resource *
+nvc0_resource_from_memobj(struct pipe_screen *screen,
+                          const struct pipe_resource *templ,
+                          struct pipe_memory_object *memobj,
+                          uint64_t offset)
+{
+   if (templ->target == PIPE_BUFFER) {
+      return NULL;
+   } else {
+      struct pipe_resource *res;
+
+      res = nv50_resource_from_memobj(screen, templ, memobj, offset);
+      if (res)
+         nv04_resource(res)->vtbl = &nvc0_miptree_vtbl;
+
+      return res;
+   }
+}
+
 void
 nvc0_init_resource_functions(struct pipe_context *pcontext)
 {
@@ -63,4 +82,7 @@ nvc0_screen_init_resource_functions(struct pipe_screen *pscreen)
    pscreen->resource_from_handle = nvc0_resource_from_handle;
    pscreen->resource_get_handle = u_resource_get_handle_vtbl;
    pscreen->resource_destroy = u_resource_destroy_vtbl;
+   pscreen->resource_from_memobj = nvc0_resource_from_memobj;
+   pscreen->memobj_create_from_handle = nv50_memobj_from_handle;
+   pscreen->memobj_destroy = nv50_memobj_destroy;
 }

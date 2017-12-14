@@ -397,13 +397,13 @@ nv50_miptree_create(struct pipe_screen *pscreen,
    return pt;
 }
 
-struct pipe_resource *
-nv50_miptree_from_handle(struct pipe_screen *pscreen,
-                         const struct pipe_resource *templ,
-                         struct winsys_handle *whandle)
+static struct pipe_resource *
+nv50_miptree_from_bo(struct pipe_screen *pscreen,
+                     const struct pipe_resource *templ,
+                     struct nouveau_bo *bo,
+                     uint32_t stride)
 {
    struct nv50_miptree *mt;
-   unsigned stride;
 
    /* only supports 2D, non-mipmapped textures for the moment */
    if ((templ->target != PIPE_TEXTURE_2D &&
@@ -417,11 +417,8 @@ nv50_miptree_from_handle(struct pipe_screen *pscreen,
    if (!mt)
       return NULL;
 
-   mt->base.bo = nouveau_screen_bo_from_handle(pscreen, whandle, &stride);
-   if (mt->base.bo == NULL) {
-      FREE(mt);
-      return NULL;
-   }
+   nouveau_bo_ref(bo, &mt->base.bo);
+
    mt->base.domain = mt->base.bo->flags & NOUVEAU_BO_APER;
    mt->base.address = mt->base.bo->offset;
 
@@ -437,6 +434,38 @@ nv50_miptree_from_handle(struct pipe_screen *pscreen,
 
    /* no need to adjust bo reference count */
    return &mt->base.base;
+}
+
+struct pipe_resource *
+nv50_miptree_from_handle(struct pipe_screen *pscreen,
+                         const struct pipe_resource *templ,
+                         struct winsys_handle *whandle)
+{
+   struct pipe_resource *resource;
+   struct nouveau_bo *bo;
+   uint32_t stride;
+
+   bo = nouveau_screen_bo_from_handle(pscreen, whandle, &stride);
+   if (bo == NULL) {
+      return NULL;
+   }
+
+   resource = nv50_miptree_from_bo(pscreen, templ, bo, stride);
+
+   /* nv50_miptree_from_bo will increment bo's refcount if succeeded */
+   nouveau_bo_ref(NULL, &bo);
+
+   return resource;
+}
+
+struct pipe_resource *
+nv50_miptree_from_memobj(struct pipe_screen *pscreen,
+                         const struct pipe_resource *templ,
+                         struct pipe_memory_object *memobj)
+{
+   struct nv50_memory_object *mo = nv50_memory_object(memobj);
+
+   return nv50_miptree_from_bo(pscreen, templ, mo->bo, mo->stride);
 }
 
 

@@ -85,6 +85,11 @@ nv50_miptree_from_handle(struct pipe_screen *pscreen,
                          const struct pipe_resource *template,
                          struct winsys_handle *whandle);
 
+struct pipe_resource *
+nv50_miptree_from_memobj(struct pipe_screen *pscreen,
+                         const struct pipe_resource *templ,
+                         struct pipe_memory_object *memobj);
+
 boolean
 nv50_miptree_get_handle(struct pipe_screen *pscreen,
                         struct pipe_resource *pt,
@@ -115,6 +120,34 @@ nv50_zs_to_s_format(enum pipe_format format)
       return format;
    }
 }
+
+struct nv50_memory_object {
+   struct pipe_memory_object base;
+
+   struct nouveau_bo *bo;
+   uint32_t stride;
+};
+
+static inline struct nv50_memory_object *
+nv50_memory_object(struct pipe_memory_object *pt)
+{
+   return (struct nv50_memory_object *)pt;
+}
+
+struct pipe_resource *
+nv50_resource_from_memobj(struct pipe_screen *screen,
+                          const struct pipe_resource *templ,
+                          struct pipe_memory_object *memobj,
+                          uint64_t offset);
+
+struct pipe_memory_object *
+nv50_memobj_from_handle(struct pipe_screen *screen,
+                        struct winsys_handle *whandle,
+                        bool dedicated);
+
+void
+nv50_memobj_destroy(struct pipe_screen *screen,
+                    struct pipe_memory_object *memobj);
 
 #ifndef __NVC0_RESOURCE_H__
 
