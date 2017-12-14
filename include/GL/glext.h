@@ -12522,6 +12522,16 @@ GLAPI void APIENTRY glReplacementCodeuiTexCoord2fColor4fNormal3fVertex3fvSUN (co
 #define GL_FOG_SPECULAR_TEXTURE_WIN       0x80EC
 #endif /* GL_WIN_specular_fog */
 
+#ifndef GL_NVX_unix_allocator_import
+#define GL_NVX_unix_allocator_import 1
+#define GL_SURFACE_METADATA_NVX           0xF000
+#define GL_HANDLE_TYPE_ALLOCATOR_FD_NVX   0xF001
+#ifdef GL_GLEXT_PROTOTYPES
+GLAPI void GLAPIENTRY glTexParametervNVX (GLenum target, GLenum pname, GLsizeiptr size, const GLvoid *params);
+#endif /* GL_GLEXT_PROTOTYPES */
+typedef void (GLAPIENTRYP PFNGLTEXPARAMETERVNVXPROC) (GLenum target, GLenum pname, GLsizeiptr size, const GLvoid *params);
+#endif
+
 #ifdef __cplusplus
 }
 #endif

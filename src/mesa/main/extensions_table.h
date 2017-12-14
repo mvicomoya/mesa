@@ -324,6 +324,7 @@ EXT(MESA_window_pos                         , dummy_true                        
 EXT(MESA_ycbcr_texture                      , MESA_ycbcr_texture                     , GLL, GLC,  x ,  x , 2002)
 
 EXT(NVX_gpu_memory_info                     , NVX_gpu_memory_info                    , GLL, GLC,  x ,  x , 2013)
+EXT(NVX_unix_allocator_import               , NVX_unix_allocator_import              , GLL, GLC,  x , ES2, 2017)
 
 EXT(NV_blend_square                         , dummy_true                             , GLL,  x ,  x ,  x , 1999)
 EXT(NV_conditional_render                   , NV_conditional_render                  , GLL, GLC,  x ,  x , 2008)
